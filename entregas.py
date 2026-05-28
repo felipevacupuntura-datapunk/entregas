@@ -9,6 +9,7 @@ Original file is located at
 
 import pandas as pd
 import streamlit as st
+import webbrowser
 import plotly.express as px
 
 caminho = 'Entregas.xlsx'
@@ -57,16 +58,16 @@ pordia = df_entregas[[
 graf = px.bar(consolidado, x='Mês', y=['Paack', 'Ecoscoting'], barmode='group')
 graf_eu = px.bar(consolidado, x='Mês', y=['Total € Paack', 'Total € Ecoscoting'], barmode='group')
 
-st.title('Dashboard de Entregas')
+st.header('Dashboard de Entregas')
 
-st.title('Consolidado Mês')
+st.subheader('Consolidado Mês')
 st.dataframe(consolidado)
-st.title('Por dia')
+st.subheader('Por dia')
 st.dataframe(pordia)
 
-st.title('Quantidade de Produto Entregue')
+st.subheader('Quantidade de Produto Entregue')
 st.plotly_chart(graf)
 
-st.title('Valor Arrecadado')
+st.subheader('Valor Arrecadado')
 st.plotly_chart(graf_eu)
 
