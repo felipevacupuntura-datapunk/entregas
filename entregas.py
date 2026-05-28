@@ -34,4 +34,4 @@ tabela = df_entregas.groupby('Mês')[['count_dias','Paack','Ecoscoting','Total P
 
 st.title('Dashboard de Entregas')
 st.dataframe(tabela)
-st.bar_chart(tabela.set_index('Mês')[['Paack', 'Ecoscoting']])
+
