@@ -9,29 +9,64 @@ Original file is located at
 
 import pandas as pd
 import streamlit as st
+import plotly.express as px
 
 caminho = 'Entregas.xlsx'
 
 df_entregas = pd.read_excel(caminho)
-df_entregas['Data'] = pd.to_datetime(df_entregas['Data'])  # converte antes!
-df_entregas = df_entregas.fillna(0)                         # fillna depois
+df_entregas['Data'] = pd.to_datetime(df_entregas['Data'])
+df_entregas['Mês'] = df_entregas['Data'].dt.month_name()
+#df_entregas['Data'] = pd.to_datetime(df_entregas['Data']).dt.date
+df_entregas['Data'] = pd.to_datetime(df_entregas['Data']).dt.strftime('%d/%m/%Y')  # converte antes!
+df_entregas = df_entregas.fillna(0)                                                # fillna depois
 
 df_entregas['Ecoscoting'] = df_entregas['Ecoscoting'].astype(int)
-df_entregas['Mês'] = df_entregas['Data'].dt.month_name()
+
 
 valor_paack = float(0.80)
 valor_ecoscoting = float(0.60)
 conveu = float(5.88)
 
 df_entregas['qtdias'] = df_entregas['Data'].value_counts()
-df_entregas['count_dias'] = df_entregas['qtdias'].fillna(1).astype(int)
-df_entregas['Total Paack'] = df_entregas['Paack']*valor_paack
-df_entregas['Total Ecoscoting'] = df_entregas['Ecoscoting']*valor_ecoscoting
-df_entregas['Total'] = df_entregas['Total Paack'] + df_entregas['Total Ecoscoting']
-df_entregas['Total Conv'] = df_entregas['Total']*conveu
+df_entregas['Dias'] = df_entregas['qtdias'].fillna(1).astype(int)
+df_entregas['Total € Paack'] = df_entregas['Paack']*valor_paack
+df_entregas['Total € Ecoscoting'] = df_entregas['Ecoscoting']*valor_ecoscoting
+df_entregas['Total €'] = df_entregas['Total € Paack'] + df_entregas['Total € Ecoscoting']
+df_entregas['Total Conv R$'] = df_entregas['Total €']*conveu
 
-tabela = df_entregas.groupby('Mês')[['count_dias','Paack','Ecoscoting','Total Paack','Total Ecoscoting', 'Total', 'Total Conv']].sum().reset_index()
+consolidado = df_entregas.groupby('Mês')[[
+    'Dias',
+    'Paack',
+    'Ecoscoting',
+    'Total € Paack',
+    'Total € Ecoscoting',
+    'Total €',
+    'Total Conv R$'
+    ]].sum().reset_index()
+
+pordia = df_entregas[[
+    'Data',
+    'Paack',
+    'Total € Paack',
+    'Ecoscoting',
+    'Total € Ecoscoting',
+    'Total €',
+    'Total Conv R$'
+    ]]
+
+graf = px.bar(consolidado, x='Mês', y=['Paack', 'Ecoscoting'], barmode='group')
+graf_eu = px.bar(consolidado, x='Mês', y=['Total € Paack', 'Total € Ecoscoting'], barmode='group')
 
 st.title('Dashboard de Entregas')
-st.dataframe(tabela)
+
+st.title('Consolidado Mês')
+st.dataframe(consolidado)
+st.title('Por dia')
+st.dataframe(pordia)
+
+st.title('Quantidade de Produto Entregue')
+st.plotly_chart(graf)
+
+st.title('Valor Arrecadado')
+st.plotly_chart(graf_eu)
 
