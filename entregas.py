@@ -7,12 +7,15 @@ Original file is located at
     https://colab.research.google.com/drive/1DyZkqYxfb4OtpoUZ95wXTJjGsHdGOO2z
 """
 
-caminho = 'Entregas.xlsx'
-
 import pandas as pd
 import streamlit as st
 
-df_entregas = pd.read_excel(caminho).fillna(0)
+caminho = 'Entregas.xlsx'
+
+df_entregas = pd.read_excel(caminho)
+df_entregas['Data'] = pd.to_datetime(df_entregas['Data'])  # converte antes!
+df_entregas = df_entregas.fillna(0)                         # fillna depois
+
 df_entregas['Ecoscoting'] = df_entregas['Ecoscoting'].astype(int)
 df_entregas['Mês'] = df_entregas['Data'].dt.month_name()
 
@@ -27,13 +30,8 @@ df_entregas['Total Ecoscoting'] = df_entregas['Ecoscoting']*valor_ecoscoting
 df_entregas['Total'] = df_entregas['Total Paack'] + df_entregas['Total Ecoscoting']
 df_entregas['Total Conv'] = df_entregas['Total']*conveu
 
-
-
-
-tabela = df_entregas.groupby('Mês')[['count_dias','Paack','Ecoscoting','Total Paack','Total Ecoscoting', 'Total', 'Total Conv' ]].sum().reset_index()
+tabela = df_entregas.groupby('Mês')[['count_dias','Paack','Ecoscoting','Total Paack','Total Ecoscoting', 'Total', 'Total Conv']].sum().reset_index()
 
 st.title('Dashboard de Entregas')
-
 st.dataframe(tabela)
-
 st.bar_chart(tabela.set_index('Mês')[['Paack', 'Ecoscoting']])
