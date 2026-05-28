@@ -11,8 +11,12 @@ import pandas as pd
 import streamlit as st
 import webbrowser
 import plotly.express as px
+import yfinance as yf
 
 caminho = 'Entregas.xlsx'
+
+euro = yf.Ticker('EURBRL=X')
+
 
 df_entregas = pd.read_excel(caminho)
 df_entregas['Data'] = pd.to_datetime(df_entregas['Data'])
@@ -26,7 +30,7 @@ df_entregas['Ecoscoting'] = df_entregas['Ecoscoting'].astype(int)
 
 valor_paack = float(0.80)
 valor_ecoscoting = float(0.60)
-conveu = float(5.88)
+conveu = euro.history(period='1d')['Close'].iloc[-1]
 
 df_entregas['qtdias'] = df_entregas['Data'].value_counts()
 df_entregas['Dias'] = df_entregas['qtdias'].fillna(1).astype(int)
@@ -59,6 +63,8 @@ graf = px.bar(consolidado, x='Mês', y=['Paack', 'Ecoscoting'], barmode='group')
 graf_eu = px.bar(consolidado, x='Mês', y=['Total € Paack', 'Total € Ecoscoting'], barmode='group')
 
 st.header('Dashboard de Entregas')
+
+st.metric('Cotação Euro/R$', f'R$ {conveu:.2f}')
 
 st.subheader('Consolidado Mês')
 st.dataframe(consolidado)
