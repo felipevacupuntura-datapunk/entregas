@@ -13,6 +13,9 @@ import webbrowser
 import plotly.express as px
 import yfinance as yf
 
+pd.set_option('display.max_columns', None)
+pd.set_option('display.float_format','{:.2f}'.format)
+
 caminho = 'Entregas.xlsx'
 
 euro = yf.Ticker('EURBRL=X')
@@ -25,26 +28,26 @@ df_entregas['Mês'] = df_entregas['Data'].dt.month_name()
 df_entregas['Data'] = pd.to_datetime(df_entregas['Data']).dt.strftime('%d/%m/%Y')  # converte antes!
 df_entregas = df_entregas.fillna(0)                                                # fillna depois
 
-df_entregas['Ecoscoting'] = df_entregas['Ecoscoting'].astype(int)
+df_entregas['Ecoscouting'] = df_entregas['Ecoscouting'].astype(int)
 
 
 valor_paack = float(0.80)
-valor_ecoscoting = float(0.60)
+valor_Ecoscouting = float(0.60)
 conveu = euro.history(period='1d')['Close'].iloc[-1]
 
 df_entregas['qtdias'] = df_entregas['Data'].value_counts()
 df_entregas['Dias'] = df_entregas['qtdias'].fillna(1).astype(int)
-df_entregas['Total € Paack'] = df_entregas['Paack']*valor_paack
-df_entregas['Total € Ecoscoting'] = df_entregas['Ecoscoting']*valor_ecoscoting
-df_entregas['Total €'] = df_entregas['Total € Paack'] + df_entregas['Total € Ecoscoting']
-df_entregas['Total Conv R$'] = df_entregas['Total €']*conveu
+df_entregas['Total € Paack'] = (df_entregas['Paack']*valor_paack).round(2)
+df_entregas['Total € Ecoscouting'] = (df_entregas['Ecoscouting']*valor_Ecoscouting).round(2)
+df_entregas['Total €'] = (df_entregas['Total € Paack'] + df_entregas['Total € Ecoscouting']).round(2)
+df_entregas['Total Conv R$'] = (df_entregas['Total €']*conveu).round(2)
 
 consolidado = df_entregas.groupby('Mês')[[
     'Dias',
     'Paack',
-    'Ecoscoting',
+    'Ecoscouting',
     'Total € Paack',
-    'Total € Ecoscoting',
+    'Total € Ecoscouting',
     'Total €',
     'Total Conv R$'
     ]].sum().reset_index()
@@ -53,14 +56,27 @@ pordia = df_entregas[[
     'Data',
     'Paack',
     'Total € Paack',
-    'Ecoscoting',
-    'Total € Ecoscoting',
+    'Ecoscouting',
+    'Total € Ecoscouting',
     'Total €',
     'Total Conv R$'
     ]]
 
-graf = px.bar(consolidado, x='Mês', y=['Paack', 'Ecoscoting'], barmode='group')
-graf_eu = px.bar(consolidado, x='Mês', y=['Total € Paack', 'Total € Ecoscoting'], barmode='group')
+quinzena = df_entregas['Data']>'15/05/2026'
+
+quin_dias = df_entregas[quinzena][[
+    'Data',
+    'Paack',
+    'Total € Paack',
+    'Ecoscouting',
+    'Total € Ecoscouting',
+    'Total €',
+    'Total Conv R$'
+    ]]
+
+
+graf = px.bar(consolidado, x='Mês', y=['Paack', 'Ecoscouting'], barmode='group')
+graf_eu = px.bar(consolidado, x='Mês', y=['Total € Paack', 'Total € Ecoscouting'], barmode='group')
 
 st.header('Dashboard de Entregas')
 
@@ -68,6 +84,8 @@ st.metric('Cotação Euro/R$', f'R$ {conveu:.2f}')
 
 st.subheader('Consolidado Mês')
 st.dataframe(consolidado)
+st.subheader('Quinze dias')
+st.dataframe(quin_dias)
 st.subheader('Por dia')
 st.dataframe(pordia)
 
