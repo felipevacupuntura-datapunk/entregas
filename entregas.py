@@ -62,7 +62,19 @@ pordia = df_entregas[[
     'Total Conv R$'
     ]]
 
+pri_quinzena = df_entregas['Data']<'15/05/2026'
 seg_quinzena = df_entregas['Data']>'15/05/2026'
+
+priquin_dias = df_entregas[pri_quinzena][[
+    'Data',
+    'Paack',
+    'Total € Paack',
+    'Ecoscouting',
+    'Total € Ecoscouting',
+    'Total €',
+    'Total Conv R$'
+    ]]
+
 
 quin_dias = df_entregas[seg_quinzena][[
     'Data',
@@ -84,14 +96,38 @@ st.metric('Cotação Euro/R$', f'R$ {conveu:.2f}')
 
 st.subheader('Consolidado Mês')
 st.dataframe(consolidado)
-st.subheader('2º seg_quinzena')
 
-col1,col2,col3,col4,col5,col6,col7  = st.columns(7)
+st.subheader('1º quinzena')
+
+col1,col2,col3  = st.columns(3)
+
+
+col1.metric('Dias',f"{df_entregas[pri_quinzena]['Dias'].sum()}")
+col2.metric('Paack', f"{df_entregas[pri_quinzena]['Paack'].sum():.0f}")
+col3.metric('Ecoscouting', f"{df_entregas[pri_quinzena]['Ecoscouting'].sum():.0f}")
+
+st.caption('Valor arrecadado')
+col4,col5,col6,col7 = st.columns(4)
+
+col4.metric('Total € Paack', f"€ {df_entregas[pri_quinzena]['Total € Paack'].sum():.0f}")
+col5.metric('Total € Ecoscouting', f"€ {df_entregas[pri_quinzena]['Total € Ecoscouting'].sum():.0f}")
+col6.metric('Total €', f"€ {df_entregas[pri_quinzena]['Total €'].sum():.0f}")
+col7.metric('Total Conv R$', f"R$ {df_entregas[pri_quinzena]['Total Conv R$'].sum():.0f}")
+
+st.dataframe(priquin_dias)
+
+st.subheader('2º quinzena')
+
+col1,col2,col3  = st.columns(3)
 
 
 col1.metric('Dias',f"{df_entregas[seg_quinzena]['Dias'].sum()}")
 col2.metric('Paack', f"{df_entregas[seg_quinzena]['Paack'].sum():.0f}")
 col3.metric('Ecoscouting', f"{df_entregas[seg_quinzena]['Ecoscouting'].sum():.0f}")
+
+st.caption('Valor arrecadado')
+col4,col5,col6,col7 = st.columns(4)
+
 col4.metric('Total € Paack', f"€ {df_entregas[seg_quinzena]['Total € Paack'].sum():.0f}")
 col5.metric('Total € Ecoscouting', f"€ {df_entregas[seg_quinzena]['Total € Ecoscouting'].sum():.0f}")
 col6.metric('Total €', f"€ {df_entregas[seg_quinzena]['Total €'].sum():.0f}")
@@ -105,5 +141,7 @@ st.dataframe(pordia)
 st.subheader('Quantidade de Produto Entregue')
 st.plotly_chart(graf)
 
+st.subheader('Valor Arrecadado')
+st.plotly_chart(graf_eu)
 st.subheader('Valor Arrecadado')
 st.plotly_chart(graf_eu)
