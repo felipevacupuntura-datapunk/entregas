@@ -143,5 +143,3 @@ st.plotly_chart(graf)
 
 st.subheader('Valor Arrecadado')
 st.plotly_chart(graf_eu)
-st.subheader('Valor Arrecadado')
-st.plotly_chart(graf_eu)
