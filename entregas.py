@@ -28,6 +28,7 @@ df_entregas['Mês'] = df_entregas['Data'].dt.month_name()
 df_entregas['Data'] = pd.to_datetime(df_entregas['Data']).dt.strftime('%d/%m/%Y')  # converte antes!
 df_entregas = df_entregas.fillna(0)                                                # fillna depois
 
+df_entregas['Paack'] = df_entregas['Paack'].astype(int)
 df_entregas['Ecoscouting'] = df_entregas['Ecoscouting'].astype(int)
 
 
@@ -103,16 +104,16 @@ col1,col2,col3  = st.columns(3)
 
 
 col1.metric('Dias',f"{df_entregas[pri_quinzena]['Dias'].sum()}")
-col2.metric('Paack', f"{df_entregas[pri_quinzena]['Paack'].sum():.0f}")
-col3.metric('Ecoscouting', f"{df_entregas[pri_quinzena]['Ecoscouting'].sum():.0f}")
+col2.metric('Paack', f"{df_entregas[pri_quinzena]['Paack'].sum()}")
+col3.metric('Ecoscouting', f"{df_entregas[pri_quinzena]['Ecoscouting'].sum()}")
 
 st.caption('Valor arrecadado')
 col4,col5,col6,col7 = st.columns(4)
 
-col4.metric('Total € Paack', f"€ {df_entregas[pri_quinzena]['Total € Paack'].sum():.0f}")
-col5.metric('Total € Ecoscouting', f"€ {df_entregas[pri_quinzena]['Total € Ecoscouting'].sum():.0f}")
-col6.metric('Total €', f"€ {df_entregas[pri_quinzena]['Total €'].sum():.0f}")
-col7.metric('Total Conv R$', f"R$ {df_entregas[pri_quinzena]['Total Conv R$'].sum():.0f}")
+col4.metric('Total € Paack', f"€ {df_entregas[pri_quinzena]['Total € Paack'].sum():.2f}")
+col5.metric('Total € Ecoscouting', f"€ {df_entregas[pri_quinzena]['Total € Ecoscouting'].sum():.2f}")
+col6.metric('Total €', f"€ {df_entregas[pri_quinzena]['Total €'].sum():.2f}")
+col7.metric('Total Conv R$', f"R$ {df_entregas[pri_quinzena]['Total Conv R$'].sum():.2f}")
 
 st.dataframe(priquin_dias)
 
@@ -122,16 +123,16 @@ col1,col2,col3  = st.columns(3)
 
 
 col1.metric('Dias',f"{df_entregas[seg_quinzena]['Dias'].sum()}")
-col2.metric('Paack', f"{df_entregas[seg_quinzena]['Paack'].sum():.0f}")
-col3.metric('Ecoscouting', f"{df_entregas[seg_quinzena]['Ecoscouting'].sum():.0f}")
+col2.metric('Paack', f"{df_entregas[seg_quinzena]['Paack'].sum()}")
+col3.metric('Ecoscouting', f"{df_entregas[seg_quinzena]['Ecoscouting'].sum()}")
 
 st.caption('Valor arrecadado')
 col4,col5,col6,col7 = st.columns(4)
 
-col4.metric('Total € Paack', f"€ {df_entregas[seg_quinzena]['Total € Paack'].sum():.0f}")
-col5.metric('Total € Ecoscouting', f"€ {df_entregas[seg_quinzena]['Total € Ecoscouting'].sum():.0f}")
-col6.metric('Total €', f"€ {df_entregas[seg_quinzena]['Total €'].sum():.0f}")
-col7.metric('Total Conv R$', f"R$ {df_entregas[seg_quinzena]['Total Conv R$'].sum():.0f}")
+col4.metric('Total € Paack', f"€ {df_entregas[seg_quinzena]['Total € Paack'].sum():.2f}")
+col5.metric('Total € Ecoscouting', f"€ {df_entregas[seg_quinzena]['Total € Ecoscouting'].sum():.2f}")
+col6.metric('Total €', f"€ {df_entregas[seg_quinzena]['Total €'].sum():.2f}")
+col7.metric('Total Conv R$', f"R$ {df_entregas[seg_quinzena]['Total Conv R$'].sum():.2f}")
 
 
 st.dataframe(quin_dias)
@@ -143,3 +144,4 @@ st.plotly_chart(graf)
 
 st.subheader('Valor Arrecadado')
 st.plotly_chart(graf_eu)
+
